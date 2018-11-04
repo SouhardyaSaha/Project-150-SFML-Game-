@@ -139,6 +139,7 @@ int main()
     playtxt.loadFromFile("hulk animation/idle-1.png");
     player.setPosition(0,rw.getSize().y/2);
     Clock clock;
+    printf("haram");
 
     while (rw.isOpen())
     {
