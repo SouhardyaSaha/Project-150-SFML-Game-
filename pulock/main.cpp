@@ -4,7 +4,7 @@
 using namespace sf;
 using namespace std;
 
-int j=1,flagwalk=1,i=1,flagidle=1;
+int j=1,flagwalk=1,i=1,flagidle=1,idlef=1;
 
 char idle [50], walk[50];
 RenderWindow rw(VideoMode(640,480),"VS-first",Style::Close|Style::Resize);
@@ -33,6 +33,27 @@ void animationidle(Clock clock)
     }
 }
 
+void animationreidle(Clock clock)
+{
+    if(clock.getElapsedTime().asMilliseconds()>250.f)
+    {
+        if(i>4)
+        {
+            flagidle=1;
+            i=3;
+        }
+        if(i<1)
+        {
+            flagidle =0;
+            i=2;
+        }
+        sprintf (idle,"hulk animation/reidle-%d.png", i);
+        playtxt.loadFromFile(idle);
+        if(flagidle==1) i--;
+        else i++;
+    }
+}
+
 void animationwalk(Clock clock)
 {
     if(clock.getElapsedTime().asMilliseconds()>250.f)
@@ -48,6 +69,27 @@ void animationwalk(Clock clock)
             j=2;
         }
         sprintf (walk,"hulk animation/walk-%d.png", j);
+        playtxt.loadFromFile(walk);
+        if(flagwalk==1) j--;
+        else j++;
+    }
+}
+
+void animationrewalk(Clock clock)
+{
+    if(clock.getElapsedTime().asMilliseconds()>250.f)
+    {
+        if(j>6)
+        {
+            flagwalk=1;
+            j=5;
+        }
+        if(j<1)
+        {
+            flagwalk=0;
+            j=2;
+        }
+        sprintf (walk,"hulk animation/rewalk-%d.png", j);
         playtxt.loadFromFile(walk);
         if(flagwalk==1) j--;
         else j++;
@@ -115,14 +157,25 @@ int main()
                     printf("%c",evnt.text.unicode);
             }
         }
+        if(idlef==1)
         animationidle(clock);
+
+        else
+            animationreidle(clock);
 
         if(Keyboard::isKeyPressed(Keyboard::D))
         {
+            idlef=1;
             animationwalk(clock);
-            player.move(1.0f, 0.0f);
+            player.move(1.f, 0.0f);
         }
 
+        if(Keyboard::isKeyPressed(Keyboard::A))
+        {
+            idlef=0;
+            animationrewalk(clock);
+            player.move(-1.f, 0.0f);
+       }
         if(Keyboard::isKeyPressed(Keyboard::L)) animationpunch();
 
         if(Keyboard::isKeyPressed(Keyboard::U)) animationupperpunch();
