@@ -4,8 +4,9 @@
 using namespace sf;
 using namespace std;
 
+int j=1,flagwalk=1,i=1,flagidle=1;
+
 char idle [50], walk[50];
-int i=1,j=1,flagidle=1,flagwalk=1;
 RenderWindow rw(VideoMode(640,480),"VS-first",Style::Close|Style::Resize);
 RectangleShape player (Vector2f(100.0f,100.0f));
 Texture playtxt;
@@ -53,11 +54,48 @@ void animationwalk(Clock clock)
     }
 }
 
+void animationpunch()
+{
+    char punch[50];
+
+    Clock clock;
+
+    for(int i=1; i<5; i++)
+    {
+        rw.clear(Color::Black);
+        sprintf (punch,"hulk animation/punch-%d.png", i);
+        playtxt.loadFromFile(punch);
+        rw.draw(player);
+        rw.display();
+        while(clock.getElapsedTime().asMilliseconds()<100.f);
+        clock.restart();
+    }
+}
+
+void animationupperpunch()
+{
+    char upperpunch[50];
+
+    Clock clock;
+
+    for(int i=1; i<6; i++)
+    {
+        rw.clear(Color::Black);
+        sprintf (upperpunch,"hulk animation/upperpunch-%d.png", i);
+        playtxt.loadFromFile(upperpunch);
+        rw.draw(player);
+        rw.display();
+        while(clock.getElapsedTime().asMilliseconds()<100.f);
+        clock.restart();
+    }
+
+}
+
 int main()
 {
-    rw.setFramerateLimit(50);
+    rw.setFramerateLimit(100);
     playtxt.loadFromFile("hulk animation/idle-1.png");
-    player.setPosition(rw.getSize().x/2,rw.getSize().y/2);
+    player.setPosition(0,rw.getSize().y/2);
     Clock clock;
 
     while (rw.isOpen())
@@ -82,8 +120,12 @@ int main()
         if(Keyboard::isKeyPressed(Keyboard::D))
         {
             animationwalk(clock);
-            player.move(0.5f, 0.0f);
+            player.move(1.0f, 0.0f);
         }
+
+        if(Keyboard::isKeyPressed(Keyboard::L)) animationpunch();
+
+        if(Keyboard::isKeyPressed(Keyboard::U)) animationupperpunch();
 
         if(clock.getElapsedTime().asMilliseconds()>250.f) clock.restart();
 
