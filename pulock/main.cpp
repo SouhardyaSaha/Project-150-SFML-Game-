@@ -4,13 +4,12 @@
 using namespace sf;
 using namespace std;
 
-int j=1,flagwalk=1,i=1,flagidle=1,idlef=1;
+int j=1,flagwalk=1,i=1,flagidle=1,idlef=1, upperPunchAnim = 6, punchanim = 5;
 
 char idle [50], walk[50];
 RenderWindow rw(VideoMode(640,480),"VS-first",Style::Close|Style::Resize);
 RectangleShape player (Vector2f(100.0f,100.0f));
 Texture playtxt;
-
 
 void animationidle(Clock clock)
 {
@@ -98,20 +97,13 @@ void animationrewalk(Clock clock)
 
 void animationpunch()
 {
-    char punch[50];
-
+    char punchc[50];
     Clock clock;
 
-    for(int i=1; i<5; i++)
-    {
-        rw.clear(Color::Black);
-        sprintf (punch,"hulk animation/punch-%d.png", i);
-        playtxt.loadFromFile(punch);
-        rw.draw(player);
-        rw.display();
-        while(clock.getElapsedTime().asMilliseconds()<100.f);
-        clock.restart();
-    }
+    sprintf (punchc,"hulk animation/punch-%d.png", punchanim);
+    playtxt.loadFromFile(punchc);
+    while(clock.getElapsedTime().asMilliseconds()<100.f);
+    clock.restart();
 }
 
 void animationupperpunch()
@@ -119,18 +111,10 @@ void animationupperpunch()
     char upperpunch[50];
 
     Clock clock;
-
-    for(int i=1; i<6; i++)
-    {
-        rw.clear(Color::Black);
-        sprintf (upperpunch,"hulk animation/upperpunch-%d.png", i);
-        playtxt.loadFromFile(upperpunch);
-        rw.draw(player);
-        rw.display();
-        while(clock.getElapsedTime().asMilliseconds()<100.f);
-        clock.restart();
-    }
-
+    sprintf (upperpunch,"hulk animation/upperpunch-%d.png", upperPunchAnim);
+    playtxt.loadFromFile(upperpunch);
+    while(clock.getElapsedTime().asMilliseconds()<100.f);
+    clock.restart();
 }
 
 int main()
@@ -158,8 +142,7 @@ int main()
             }
         }
         if(idlef==1)
-        animationidle(clock);
-
+            animationidle(clock);
         else
             animationreidle(clock);
 
@@ -176,13 +159,25 @@ int main()
             animationrewalk(clock);
             player.move(-1.f, 0.0f);
        }
-        if(Keyboard::isKeyPressed(Keyboard::L)) animationpunch();
 
-        if(Keyboard::isKeyPressed(Keyboard::U)) animationupperpunch();
+        if(Keyboard::isKeyPressed(Keyboard::L))   punchanim = 1;
+        if(punchanim < 5)
+        {
+            animationpunch();
+            punchanim++;
+        }
+
+        if(Keyboard::isKeyPressed(Keyboard::U))   upperPunchAnim=1;
+        if(upperPunchAnim < 6)
+        {
+            animationupperpunch();
+            upperPunchAnim++;
+        }
 
         if(clock.getElapsedTime().asMilliseconds()>250.f) clock.restart();
-
+        playtxt.setSmooth(true);
         player.setTexture(&playtxt);
+        playtxt.setSmooth(true);
         rw.clear(Color::Black);
         rw.draw(player);
         rw.display();
