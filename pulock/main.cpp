@@ -106,12 +106,35 @@ void animationpunch()
     clock.restart();
 }
 
+void animationrepunch()
+{
+    char punchc[50];
+    Clock clock;
+
+    sprintf (punchc,"hulk animation/repunch-%d.png", punchanim);
+    playtxt.loadFromFile(punchc);
+    while(clock.getElapsedTime().asMilliseconds()<100.f);
+    clock.restart();
+}
+
+
 void animationupperpunch()
 {
     char upperpunch[50];
 
     Clock clock;
     sprintf (upperpunch,"hulk animation/upperpunch-%d.png", upperPunchAnim);
+    playtxt.loadFromFile(upperpunch);
+    while(clock.getElapsedTime().asMilliseconds()<100.f);
+    clock.restart();
+}
+
+void animationreupperpunch()
+{
+    char upperpunch[50];
+
+    Clock clock;
+    sprintf (upperpunch,"hulk animation/reupperpunch-%d.png", upperPunchAnim);
     playtxt.loadFromFile(upperpunch);
     while(clock.getElapsedTime().asMilliseconds()<100.f);
     clock.restart();
@@ -160,17 +183,21 @@ int main()
             player.move(-1.f, 0.0f);
        }
 
-        if(Keyboard::isKeyPressed(Keyboard::L))   punchanim = 1;
+        if(Keyboard::isKeyPressed(Keyboard::L)) punchanim = 1;
+
         if(punchanim < 5)
         {
-            animationpunch();
+            if(idlef==1)    animationpunch();
+            else    animationrepunch();
+
             punchanim++;
         }
 
         if(Keyboard::isKeyPressed(Keyboard::U))   upperPunchAnim=1;
         if(upperPunchAnim < 6)
         {
-            animationupperpunch();
+            if(idlef==1)    animationupperpunch();
+            else    animationreupperpunch();
             upperPunchAnim++;
         }
 
