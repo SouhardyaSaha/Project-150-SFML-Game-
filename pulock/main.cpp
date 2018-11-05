@@ -4,9 +4,9 @@
 using namespace sf;
 using namespace std;
 
-int j=1,flagwalk=1,i=1,flagidle=1,idlef=1, upperPunchAnim = 6, punchanim = 5;
+int j=1,flagwalk=1,i=1,flagidle=1,idlef=1, upperPunchAnim = 6, punchanim = 5,jumpanim=7;
 
-char idle [50], walk[50];
+char idle [50], walk[50] ;
 RenderWindow rw(VideoMode(640,480),"VS-first",Style::Close|Style::Resize);
 RectangleShape player (Vector2f(100.0f,100.0f));
 Texture playtxt;
@@ -93,6 +93,26 @@ void animationrewalk(Clock clock)
         if(flagwalk==1) j--;
         else j++;
     }
+}
+
+void jumpanimation (){
+    char jump[50];
+    Clock clock;
+
+    sprintf (jump,"hulk animation/jump-%d.png", jumpanim);
+    playtxt.loadFromFile(jump);
+    while(clock.getElapsedTime().asMilliseconds()<400.f);
+    clock.restart();
+}
+
+void rejumpanimation (){
+    char jump[50];
+    Clock clock;
+
+    sprintf (jump,"hulk animation/rejump-%d.png", jumpanim);
+    playtxt.loadFromFile(jump);
+    while(clock.getElapsedTime().asMilliseconds()<100.f);
+    clock.restart();
 }
 
 void animationpunch()
@@ -200,6 +220,15 @@ int main()
             else    animationreupperpunch();
             upperPunchAnim++;
         }
+
+        if(Keyboard::isKeyPressed(Keyboard::Space)) jumpanim=1;
+
+            if(jumpanim<7){
+                if(idlef==1) jumpanimation();
+                else
+                    rejumpanimation();
+            jumpanim++;
+            }
 
         if(clock.getElapsedTime().asMilliseconds()>250.f) clock.restart();
         playtxt.setSmooth(true);
