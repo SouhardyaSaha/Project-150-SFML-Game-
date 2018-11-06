@@ -1,5 +1,6 @@
 #include<SFML/Graphics.hpp>
 #include<bits/stdc++.h>
+#include<SFML/Audio.hpp>
 
 using namespace sf;
 using namespace std;
@@ -10,6 +11,8 @@ char idle [50], walk[50] ;
 RenderWindow rw(VideoMode(640,480),"VS-first",Style::Close|Style::Resize);
 RectangleShape player (Vector2f(100.0f,100.0f));
 Texture playtxt;
+Music background;
+
 
 void animationidle(Clock clock)
 {
@@ -166,6 +169,12 @@ int main()
     playtxt.loadFromFile("hulk animation/idle-1.png");
     player.setPosition(0,rw.getSize().y/2);
     Clock clock;
+    background.openFromFile("Music samples/background.ogg");
+//    backgroun("Music samples/background.ogg");
+
+    background.play();
+    background.setLoop(true);
+
 
     while (rw.isOpen())
     {
