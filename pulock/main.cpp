@@ -114,7 +114,7 @@ void rejumpanimation (){
 
     sprintf (jump,"hulk animation/rejump-%d.png", jumpanim);
     playtxt.loadFromFile(jump);
-    while(clock.getElapsedTime().asMilliseconds()<100.f);
+    while(clock.getElapsedTime().asMilliseconds()<400.f);
     clock.restart();
 }
 
@@ -172,6 +172,7 @@ int main()
     background.openFromFile("Music samples/background.ogg");
 //    backgroun("Music samples/background.ogg");
 
+    background.setVolume(50.f);
     background.play();
     background.setLoop(true);
 
