@@ -10,8 +10,12 @@ int j=1,flagwalk=1,i=1,flagidle=1,idlef=1, upperPunchAnim = 6, punchanim = 5,jum
 char idle [50], walk[50] ;
 RenderWindow rw(VideoMode(640,480),"VS-first",Style::Close|Style::Resize);
 RectangleShape player (Vector2f(100.0f,100.0f));
-Texture playtxt;
-Music background;
+Texture playtxt,BackgroundTexture;
+Music backgroundmusic;
+
+Sprite background;
+Vector2u TextureSize;
+Vector2u WindowSize;
 
 
 void animationidle(Clock clock)
@@ -167,14 +171,27 @@ int main()
 {
     rw.setFramerateLimit(100);
     playtxt.loadFromFile("hulk animation/idle-1.png");
-    player.setPosition(0,rw.getSize().y/2);
+    player.setPosition(0,rw.getSize().y-157);
     Clock clock;
-    background.openFromFile("Music samples/background.ogg");
-//    backgroun("Music samples/background.ogg");
+    ///Music
+    backgroundmusic.openFromFile("Music samples/backgroundmusic.ogg");
+    backgroundmusic.setVolume(50.f);
+    backgroundmusic.play();
+    backgroundmusic.setLoop(true);
+    ///
 
-    background.setVolume(50.f);
-    background.play();
-    background.setLoop(true);
+    ///background image
+
+    BackgroundTexture.loadFromFile("background.png");
+
+    TextureSize = BackgroundTexture.getSize();
+    WindowSize = rw.getSize();
+
+    float ScaleX = (float) WindowSize.x / TextureSize.x;
+    float ScaleY = (float) WindowSize.y / TextureSize.y;
+
+    background.setTexture(BackgroundTexture);
+    background.setScale(ScaleX, ScaleY);
 
 
     while (rw.isOpen())
@@ -245,6 +262,7 @@ int main()
         player.setTexture(&playtxt);
         playtxt.setSmooth(true);
         rw.clear(Color::Black);
+        rw.draw(background);
         rw.draw(player);
         rw.display();
     }
