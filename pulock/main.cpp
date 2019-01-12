@@ -17,161 +17,19 @@ Sprite background;
 Vector2u TextureSize;
 Vector2u WindowSize;
 
+#include"player.hpp"
+//#include"jump.hpp"
+#include"punching.hpp"
+#include"updatemovement.hpp"
 
-void animationidle(Clock clock)
-{
-    if(clock.getElapsedTime().asMilliseconds()>250.f)
-    {
-        if(i>4)
-        {
-            flagidle=1;
-            i=3;
-        }
-        if(i<1)
-        {
-            flagidle =0;
-            i=2;
-        }
-        sprintf (idle,"hulk animation/idle-%d.png", i);
-        playtxt.loadFromFile(idle);
-        if(flagidle==1) i--;
-        else i++;
-    }
-}
-
-void animationreidle(Clock clock)
-{
-    if(clock.getElapsedTime().asMilliseconds()>250.f)
-    {
-        if(i>4)
-        {
-            flagidle=1;
-            i=3;
-        }
-        if(i<1)
-        {
-            flagidle =0;
-            i=2;
-        }
-        sprintf (idle,"hulk animation/reidle-%d.png", i);
-        playtxt.loadFromFile(idle);
-        if(flagidle==1) i--;
-        else i++;
-    }
-}
-
-void animationwalk(Clock clock)
-{
-    if(clock.getElapsedTime().asMilliseconds()>250.f)
-    {
-        if(j>6)
-        {
-            flagwalk=1;
-            j=5;
-        }
-        if(j<1)
-        {
-            flagwalk=0;
-            j=2;
-        }
-        sprintf (walk,"hulk animation/walk-%d.png", j);
-        playtxt.loadFromFile(walk);
-        if(flagwalk==1) j--;
-        else j++;
-    }
-}
-
-void animationrewalk(Clock clock)
-{
-    if(clock.getElapsedTime().asMilliseconds()>250.f)
-    {
-        if(j>6)
-        {
-            flagwalk=1;
-            j=5;
-        }
-        if(j<1)
-        {
-            flagwalk=0;
-            j=2;
-        }
-        sprintf (walk,"hulk animation/rewalk-%d.png", j);
-        playtxt.loadFromFile(walk);
-        if(flagwalk==1) j--;
-        else j++;
-    }
-}
-
-void jumpanimation (){
-    char jump[50];
-    Clock clock;
-
-    sprintf (jump,"hulk animation/jump-%d.png", jumpanim);
-    playtxt.loadFromFile(jump);
-    while(clock.getElapsedTime().asMilliseconds()<400.f);
-    clock.restart();
-}
-
-void rejumpanimation (){
-    char jump[50];
-    Clock clock;
-
-    sprintf (jump,"hulk animation/rejump-%d.png", jumpanim);
-    playtxt.loadFromFile(jump);
-    while(clock.getElapsedTime().asMilliseconds()<400.f);
-    clock.restart();
-}
-
-void animationpunch()
-{
-    char punchc[50];
-    Clock clock;
-
-    sprintf (punchc,"hulk animation/punch-%d.png", punchanim);
-    playtxt.loadFromFile(punchc);
-    while(clock.getElapsedTime().asMilliseconds()<100.f);
-    clock.restart();
-}
-
-void animationrepunch()
-{
-    char punchc[50];
-    Clock clock;
-
-    sprintf (punchc,"hulk animation/repunch-%d.png", punchanim);
-    playtxt.loadFromFile(punchc);
-    while(clock.getElapsedTime().asMilliseconds()<100.f);
-    clock.restart();
-}
-
-
-void animationupperpunch()
-{
-    char upperpunch[50];
-
-    Clock clock;
-    sprintf (upperpunch,"hulk animation/upperpunch-%d.png", upperPunchAnim);
-    playtxt.loadFromFile(upperpunch);
-    while(clock.getElapsedTime().asMilliseconds()<100.f);
-    clock.restart();
-}
-
-void animationreupperpunch()
-{
-    char upperpunch[50];
-
-    Clock clock;
-    sprintf (upperpunch,"hulk animation/reupperpunch-%d.png", upperPunchAnim);
-    playtxt.loadFromFile(upperpunch);
-    while(clock.getElapsedTime().asMilliseconds()<100.f);
-    clock.restart();
-}
+float velocityY = 0;
+bool isjumping = false;
 
 int main()
 {
     rw.setFramerateLimit(100);
     playtxt.loadFromFile("hulk animation/idle-1.png");
-    player.setPosition(0,rw.getSize().y-157);
+    player.setPosition(0,rw.getSize().y-158);
     Clock clock;
     ///Music
     backgroundmusic.openFromFile("Music samples/backgroundmusic.ogg");
@@ -201,14 +59,16 @@ int main()
         {
             switch (evnt.type)
             {
-            case Event::Closed:
-                rw.close();
-                break;
-            case Event::Resized:
-                break;
-            case Event::TextEntered:
-                if(evnt.text.unicode<128)
-                    printf("%c",evnt.text.unicode);
+                case Event::Closed:
+                    rw.close();
+                    break;
+                case Event::Resized:
+                    break;
+                case Event::TextEntered:
+                    if(evnt.text.unicode<128)
+                        printf("%c",evnt.text.unicode);
+//                case Event::KeyReleased: isjumping = false;
+//                    break;
             }
         }
         if(idlef==1)
@@ -220,7 +80,7 @@ int main()
         {
             idlef=1;
             animationwalk(clock);
-            player.move(1.f, 0.0f);
+            player.move(1.0f, 0.0f);
         }
 
         if(Keyboard::isKeyPressed(Keyboard::A))
@@ -241,21 +101,32 @@ int main()
         }
 
         if(Keyboard::isKeyPressed(Keyboard::U))   upperPunchAnim=1;
-        if(upperPunchAnim < 6)
-        {
-            if(idlef==1)    animationupperpunch();
-            else    animationreupperpunch();
-            upperPunchAnim++;
-        }
-
-        if(Keyboard::isKeyPressed(Keyboard::Space)) jumpanim=1;
-
-            if(jumpanim<7){
-                if(idlef==1) jumpanimation();
-                else
-                    rejumpanimation();
-            jumpanim++;
+            if(upperPunchAnim < 6)
+            {
+                if(idlef==1)    animationupperpunch();
+                else    animationreupperpunch();
+                upperPunchAnim++;
             }
+
+        if(Keyboard::isKeyPressed(Keyboard::W) && player.getPosition().y >= rw.getSize().y-158)
+        {
+            isjumping = true;
+        }
+        if(isjumping){
+            velocityY=-20;
+            isjumping=false;
+        }
+        player.move(0, velocityY);
+
+        if(player.getPosition().y >= rw.getSize().y-158){
+            velocityY = 0;
+        }
+        else {
+            velocityY++;
+            if(Keyboard::isKeyPressed(Keyboard::D)) player.move(2, 0);
+            if(Keyboard::isKeyPressed(Keyboard::A)) player.move(-2, 0);
+
+        }
 
         if(clock.getElapsedTime().asMilliseconds()>250.f) clock.restart();
         playtxt.setSmooth(true);
