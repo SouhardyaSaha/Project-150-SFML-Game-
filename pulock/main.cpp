@@ -74,7 +74,7 @@ void menuscreen(RenderWindow &window)
 
 
         menuUpperWriting.setFont(menuUp);
-        menuUpperWriting.setColor(Color::White);
+        menuUpperWriting.setColor(255,255,255);
         menuUpperWriting.setCharacterSize(40);
         menuUpperWriting.setString("Menu");
         menuUpperWriting.setPosition(150, 10);
@@ -162,6 +162,14 @@ void MoveDown()
         selectedItemIndex = 0;
     }
 }
+///Menu End
+
+///Eenemy
+
+void enemy(RenderWindow window)
+{
+
+}
 
 
 int main()
@@ -178,7 +186,6 @@ int main()
     ///
 
     ///background image
-
     BackgroundTexture.loadFromFile("background.png");
 
     TextureSize = BackgroundTexture.getSize();
@@ -195,7 +202,6 @@ int main()
         Event evnt;
         while (rw.pollEvent(evnt))
         {
-
             switch (evnt.type)
             {
             case Event::Closed:
@@ -251,9 +257,7 @@ int main()
             upperPunchAnim++;
         }
 
-
         ///jumping logic
-
         if(Keyboard::isKeyPressed(Keyboard::W) && player.getPosition().y >= rw.getSize().y-158)
         {
             isjumping = true;
@@ -267,7 +271,7 @@ int main()
 
         if(player.getPosition().y >= rw.getSize().y-158)
         {
-            velocityY = 0;
+            velocityY=0;
         }
         else
         {
@@ -283,15 +287,15 @@ int main()
         if(clock.getElapsedTime().asMilliseconds()>250.f)
             clock.restart();
 
-//        playtxt.setSmooth(true);
-//        player.setTexture(&playtxt);
-//        playtxt.setSmooth(true);
-//        rw.clear(Color::Black);
-//        rw.draw(background);
-//        rw.draw(player);
-        menuscreen(rw);
+        playtxt.setSmooth(true);
+        player.setTexture(&playtxt);
+        playtxt.setSmooth(true);
+        rw.clear(Color::Black);
+        rw.draw(background);
+        rw.draw(player);
+//        menuscreen(rw);
 //        drawto(rw);
-//        rw.display();
+        rw.display();
     }
     return 0;
 }
