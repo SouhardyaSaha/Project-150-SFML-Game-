@@ -8,7 +8,7 @@ using namespace std;
 int j=1,flagwalk=1,i=1,flagidle=1,idlef=1, upperPunchAnim = 6, punchanim = 5,jumpanim=7;
 
 char idle [50], walk[50] ;
-RenderWindow rw(VideoMode(800,600),"VS-first",Style::Close|Style::Resize);
+RenderWindow rw(VideoMode(1000, 751),"VS-first",Style::Close|Style::Resize);
 RectangleShape player (Vector2f(100.0f,100.0f));
 Texture playtxt,BackgroundTexture,guli,example;
 
@@ -17,11 +17,12 @@ Music backgroundmusic;
 Sprite background;
 Vector2u TextureSize;
 Vector2u WindowSize;
+View view;
 
 #include"player.hpp"
 #include"punching.hpp"
 
-float velocityY = 0.0;
+float velocityY = 0.0, bx = 500;
 bool isjumping = false;
 
 ///Jumping
@@ -32,7 +33,7 @@ void animationjump()
 
     sprintf (jump,"hulk animation/jump-%d.png", jumpanim);
     playtxt.loadFromFile(jump);
-    while(clock.getElapsedTime().asMilliseconds()<500.f);
+    while(clock.getElapsedTime().asMilliseconds()<100.f);
     clock.restart();
 }
 
@@ -43,14 +44,13 @@ void animationrejump()
 
     sprintf (jump,"hulk animation/rejump-%d.png", jumpanim);
     playtxt.loadFromFile(jump);
-    while(clock.getElapsedTime().asMilliseconds()<500.f);
+    while(clock.getElapsedTime().asMilliseconds()<100.f);
     clock.restart();
 }
 ///
 
 ///Menu screen
 #include"menu.hpp"
-
 ///Menu End
 
 
@@ -78,14 +78,18 @@ public:
 
 int main()
 {
+
+//    view.zoom(2.0);
+    float lowergroundY = rw.getSize().y-290 ;
+
     rw.setFramerateLimit(100);
     playtxt.loadFromFile("hulk animation/idle-1.png");
-    player.setPosition(0,rw.getSize().y-158);
-    player.setScale(1.3,1.3);
+    player.setPosition(0,lowergroundY);
+    player.setScale(2,2);
     Clock clock,btime;
     ///Music
     backgroundmusic.openFromFile("Music samples/backgroundmusic.ogg");
-    backgroundmusic.setVolume(50.f);
+    backgroundmusic.setVolume(25.f);
     backgroundmusic.play();
     backgroundmusic.setLoop(true);
     float time=0.0;
@@ -99,11 +103,11 @@ int main()
     TextureSize = BackgroundTexture.getSize();
     WindowSize = rw.getSize();
 
-    float ScaleX = (float) WindowSize.x / TextureSize.x;
+    //float ScaleX = (float) WindowSize.x / TextureSize.x;
     float ScaleY = (float) WindowSize.y / TextureSize.y;
 
     background.setTexture(BackgroundTexture);
-    background.setScale(ScaleX, ScaleY);
+    background.setScale(1, ScaleY);
 
     while (rw.isOpen())
     {
@@ -122,9 +126,16 @@ int main()
                     printf("%c",evnt.text.unicode);
             }
         }
+        ///menu
         while(IsMenuStarted) menuscreen(rw);
         if(Keyboard::isKeyPressed(Keyboard::Escape)) IsMenuStarted = true;
+        ///end
 
+        ///viewing handle
+//
+//        view.setCenter(player.getPosition());
+//        view.zoom();
+        ///end
 
         if(idlef==1)
             animationidle(clock);
@@ -135,14 +146,14 @@ int main()
         {
             idlef=1;
             animationwalk(clock);
-            player.move(1.0f, 0.0f);
+            player.move(1.3f, 0.0f);
         }
 
         if(Keyboard::isKeyPressed(Keyboard::A))
         {
             idlef=0;
             animationrewalk(clock);
-            player.move(-1.f, 0.0f);
+            player.move(-1.3f, 0.0f);
         }
 
         if(Keyboard::isKeyPressed(Keyboard::L))
@@ -170,12 +181,13 @@ int main()
         }
 
         ///jumping logic
-        if(Keyboard::isKeyPressed(Keyboard::W) && player.getPosition().y >= rw.getSize().y-158)
+        if(Keyboard::isKeyPressed(Keyboard::W) && player.getPosition().y >= lowergroundY)
         {
             isjumping = true;
         }
         if(isjumping)
         {
+//<<<<<<< HEAD
             velocityY=-20;
             jumpanim=1;
             if(jumpanim < 7)
@@ -186,11 +198,15 @@ int main()
                     animationrejump();
                 jumpanim++;
             }
-                isjumping=false;
+
+//=======
+            velocityY=-22;
+            isjumping=false;
+//>>>>>>> 15e9721b2bd53325deba29be71ffa31702f1a0d7
         }
         player.move(0, velocityY);
 
-        if(player.getPosition().y >= rw.getSize().y-158)
+        if(player.getPosition().y >= lowergroundY)
         {
             velocityY=0;
         }
@@ -234,6 +250,9 @@ int main()
         if(clock.getElapsedTime().asMilliseconds()>250.f)
             clock.restart();
 
+
+//        View currentView = rw.getView();
+//        rw.setView(view);
         playtxt.setSmooth(true);
         player.setTexture(&playtxt);
         playtxt.setSmooth(true);
@@ -241,6 +260,10 @@ int main()
         rw.draw(background);
         rw.draw(player);
         rw.draw(exmp);
+        if(player.getPosition().x > 500 && player.getPosition().x < 6560) bx = player.getPosition().x;
+        view.setCenter(bx, 375.5);
+        view.setSize(1000, 751);
+        rw.setView(view);
 //        for(int kl=0;kl < magazine.size() ;kl++)
 //        {
 //            rw.draw(magazine[kl].shape);
