@@ -54,14 +54,14 @@ void menuscreen(RenderWindow &window)
     MenuTexture.loadFromFile("menu.png");
     Sprite menuDisplay(MenuTexture);
 
-//    menutexturesize = MenuTexture.getSize();
-//    menuwindowsize = window.getSize();
-//
-//    float ScaleX = (float) menuwindowsize.x / menutexturesize.x;
-//    float ScaleY = (float) menuwindowsize.y / menutexturesize.y;
-//
-//    menuDisplay.setTexture(MenuTexture);
-//    menuDisplay.setScale(ScaleX, ScaleY);
+    menutexturesize = MenuTexture.getSize();
+    menuwindowsize = window.getSize();
+
+    float ScaleX = (float) menuwindowsize.x / menutexturesize.x;
+    float ScaleY = (float) menuwindowsize.y / menutexturesize.y;
+
+    menuDisplay.setTexture(MenuTexture);
+    menuDisplay.setScale(ScaleX, ScaleY);
 
     if(!MenuStartFont.loadFromFile("Fonts/1.ttf"))
     {
