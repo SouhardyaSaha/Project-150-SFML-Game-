@@ -74,7 +74,7 @@ void menuscreen(RenderWindow &window)
 
 
         menuUpperWriting.setFont(menuUp);
-        menuUpperWriting.setColor(255,255,255);
+        menuUpperWriting.setColor(Color::White);
         menuUpperWriting.setCharacterSize(40);
         menuUpperWriting.setString("Menu");
         menuUpperWriting.setPosition(150, 10);

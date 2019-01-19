@@ -8,7 +8,7 @@ using namespace std;
 int j=1,flagwalk=1,i=1,flagidle=1,idlef=1, upperPunchAnim = 6, punchanim = 5,jumpanim=7;
 
 char idle [50], walk[50] ;
-RenderWindow rw(VideoMode(1024,768),"VS-first",Style::Close|Style::Resize);
+RenderWindow rw(VideoMode(800,600),"VS-first",Style::Close|Style::Resize);
 RectangleShape player (Vector2f(100.0f,100.0f));
 Texture playtxt,BackgroundTexture,guli,example;
 
@@ -25,145 +25,8 @@ float velocityY = 0.0;
 bool isjumping = false;
 
 ///Menu screen
+#include"menu.hpp"
 
-#define Item_num_menu 3
-
-void MoveUp();
-void MoveDown();
-
-Clock menuClock;
-bool isMenuDisplay = false;
-
-
-static int selectedItemIndex = 0;
-Text menu[Item_num_menu];
-
-int GetPressedItem()
-{
-    return selectedItemIndex;
-}
-
-bool IsMenuStarted = true;
-
-void menuscreen(RenderWindow &window)
-{
-    Text menuUpperWriting;
-    Font MenuStartFont,menuUp;
-    float width = window.getSize().x, height = window.getSize().y;
-
-    Texture MenuTexture;
-    Vector2u menutexturesize, menuwindowsize;
-    MenuTexture.loadFromFile("menu.png");
-    Sprite menuDisplay(MenuTexture);
-
-//    menutexturesize = MenuTexture.getSize();
-//    menuwindowsize = window.getSize();
-//
-//    float ScaleX = (float) menuwindowsize.x / menutexturesize.x;
-//    float ScaleY = (float) menuwindowsize.y / menutexturesize.y;
-//
-//    menuDisplay.setTexture(MenuTexture);
-//    menuDisplay.setScale(ScaleX, ScaleY);
-
-    if(!MenuStartFont.loadFromFile("Fonts/1.ttf"))
-    {
-        cout<<"error font"<<endl;
-    }
-    if(!menuUp.loadFromFile("Fonts/3.ttf"))
-    {
-        cout<<"error font"<<endl;
-    }
-
-
-        menuUpperWriting.setFont(menuUp);
-        menuUpperWriting.setColor(Color::White);
-        menuUpperWriting.setCharacterSize(40);
-        menuUpperWriting.setString("Menu");
-        menuUpperWriting.setPosition(150, 10);
-
-//    float ScaleX = (float) menuwindowsize.x / menutexturesize.x;
-//    float ScaleY = (float) menutexturesize.y / menutexturesize.y;
-
-        menu[0].setFont(MenuStartFont);
-        menu[0].setColor(Color::White);
-        menu[0].setCharacterSize(60);
-        menu[0].setString("Start Game");
-        menu[0].setPosition(45, 150);
-
-        menu[1].setFont(MenuStartFont);
-        menu[1].setColor(Color::White);
-        menu[0].setCharacterSize(40);
-        menu[1].setString("Settings");
-        menu[1].setPosition(45,210);
-
-        menu[2].setFont(MenuStartFont);
-        menu[2].setColor(Color::White);
-        menu[0].setCharacterSize(40);
-        menu[2].setString("Exit");
-        menu[2].setPosition(45, 260);
-
-    if(Keyboard::isKeyPressed(Keyboard::Up) && menuClock.getElapsedTime().asMilliseconds()>250)
-        MoveUp();
-    if(Keyboard::isKeyPressed(Keyboard::Down) && menuClock.getElapsedTime().asMilliseconds()>250)
-        MoveDown();
-    if(Keyboard::isKeyPressed(Keyboard::Return))
-    {
-        switch (GetPressedItem())
-        {
-        case 0:
-            isMenuDisplay = false;
-            cout << "Play button has been pressed" << std::endl;
-            break;
-        case 1:
-            cout << "Option button has been pressed" << std::endl;
-            break;
-        case 2:
-            cout << "Exit button has been pressed" << std::endl;
-            break;
-        }
-    }
-
-    menu[0].setColor(Color::White);
-    menu[1].setColor(Color::White);
-    menu[2].setColor(Color::White);
-
-    menu[selectedItemIndex].setColor(Color::Green);
-
-
-    window.draw(menuDisplay);
-    for(int i=0; i< Item_num_menu; i++)
-    {
-        window.draw(menu[i]);
-    }
-    window.draw(menuUpperWriting);
-    window.display();
-}
-
-void MoveUp()
-{
-    menuClock.restart();
-    if (selectedItemIndex - 1 >= 0)
-    {
-        selectedItemIndex--;
-    }
-    else
-    {
-        selectedItemIndex = 2;
-    }
-}
-
-void MoveDown()
-{
-    menuClock.restart();
-    if (selectedItemIndex + 1 < Item_num_menu)
-    {
-        selectedItemIndex++;
-    }
-    else
-    {
-        selectedItemIndex = 0;
-    }
-}
 ///Menu End
 
 
@@ -194,6 +57,7 @@ int main()
     rw.setFramerateLimit(100);
     playtxt.loadFromFile("hulk animation/idle-1.png");
     player.setPosition(0,rw.getSize().y-158);
+    player.setScale(1.3,1.3);
     Clock clock,btime;
     ///Music
     backgroundmusic.openFromFile("Music samples/backgroundmusic.ogg");
@@ -206,9 +70,7 @@ int main()
 
     ///background image
     BackgroundTexture.loadFromFile("background.png");
-    guli.loadFromFile("fire_blue.png");
-     example.loadFromFile("idle-4.png");
-     Sprite exmp(example);
+    Sprite exmp(example);
 
     TextureSize = BackgroundTexture.getSize();
     WindowSize = rw.getSize();
@@ -236,6 +98,10 @@ int main()
                     printf("%c",evnt.text.unicode);
             }
         }
+        while(IsMenuStarted) menuscreen(rw);
+        if(Keyboard::isKeyPressed(Keyboard::Escape)) IsMenuStarted = true;
+
+
         if(idlef==1)
             animationidle(clock);
         else
@@ -306,8 +172,10 @@ int main()
         }
         ///END
         ///bullet
-        time=btime.getElapsedTime().asSeconds();
+        guli.loadFromFile("fire_blue.png");
+        example.loadFromFile("idle-4.png");
 
+        time=btime.getElapsedTime().asSeconds();
         exmp.setPosition(150.f,150.f);
 
         if(time > 1.0)
@@ -333,20 +201,18 @@ int main()
         if(clock.getElapsedTime().asMilliseconds()>250.f)
             clock.restart();
 
-//        playtxt.setSmooth(true);
-//        player.setTexture(&playtxt);
-//        playtxt.setSmooth(true);
-//        rw.clear(Color::Black);
-//        rw.draw(background);
-//        rw.draw(player);
-//        rw.draw(exmp);
+        playtxt.setSmooth(true);
+        player.setTexture(&playtxt);
+        playtxt.setSmooth(true);
+        rw.clear(Color::Black);
+        rw.draw(background);
+        rw.draw(player);
+        rw.draw(exmp);
 //        for(int kl=0;kl < magazine.size() ;kl++)
 //        {
 //            rw.draw(magazine[kl].shape);
 //        }
-        menuscreen(rw);
-//        drawto(rw);
-//        rw.display();
+        rw.display();
     }
     return 0;
 }
