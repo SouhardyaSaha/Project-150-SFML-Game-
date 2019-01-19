@@ -24,6 +24,30 @@ Vector2u WindowSize;
 float velocityY = 0.0;
 bool isjumping = false;
 
+///Jumping
+void animationjump()
+{
+    char jump[50];
+    Clock clock;
+
+    sprintf (jump,"hulk animation/jump-%d.png", jumpanim);
+    playtxt.loadFromFile(jump);
+    while(clock.getElapsedTime().asMilliseconds()<500.f);
+    clock.restart();
+}
+
+void animationrejump()
+{
+    char jump[50];
+    Clock clock;
+
+    sprintf (jump,"hulk animation/rejump-%d.png", jumpanim);
+    playtxt.loadFromFile(jump);
+    while(clock.getElapsedTime().asMilliseconds()<500.f);
+    clock.restart();
+}
+///
+
 ///Menu screen
 #include"menu.hpp"
 
@@ -153,7 +177,16 @@ int main()
         if(isjumping)
         {
             velocityY=-20;
-            isjumping=false;
+            jumpanim=1;
+            if(jumpanim < 7)
+            {
+                if(idlef==1)
+                    animationjump();
+                else
+                    animationrejump();
+                jumpanim++;
+            }
+                isjumping=false;
         }
         player.move(0, velocityY);
 
