@@ -58,9 +58,12 @@ bool isGameover = false;
 
 void gameover(RenderWindow &window)
 {
+    window.clear();
+    View overView;
+    overView.setCenter(window.getSize().x/2,window.getSize().y/2);
     Texture gameoverBackground;
     gameoverBackground.loadFromFile("gameoverbg.png");
-    Sprite overSprite;
+    Sprite overSprite(gameoverBackground);
     Vector2u TSize,WSize;
 
     TSize=gameoverBackground.getSize();
@@ -72,6 +75,15 @@ void gameover(RenderWindow &window)
     overSprite.setTexture(gameoverBackground);
     overSprite.setScale(ScaleX, ScaleY);
 
+    if(Keyboard::isKeyPressed(Keyboard::Escape))
+        {
+            isGameover = false;
+            IsMenuStarted = true;
+            return;
+//            menuscreen(window);
+        }
+    overView.setSize(1000, 751);
+    window.setView(overView);
     window.draw(overSprite);
     window.display();
 }
@@ -214,7 +226,6 @@ public:
 
 
 
-
 int main()
 {
     float lowergroundY = rw.getSize().y-290 ;
@@ -249,7 +260,7 @@ int main()
 
     ///hulk life
 
-    int hulkLife = 1000;
+    int hulkLife = 100;
 
     ///enemy variables
     int enemyLowerGround = 583;
@@ -282,11 +293,6 @@ int main()
         ///Gameover
         while(isGameover)
             gameover(rw);
-        if(Keyboard::isKeyPressed(Keyboard::Escape))
-            isGameover = false;
-
-
-
 
         ///menu
         while(IsMenuStarted)
@@ -294,6 +300,8 @@ int main()
         if(Keyboard::isKeyPressed(Keyboard::Escape))
             IsMenuStarted = true;
         ///end
+
+        bool isPunching = false;
 
 
         if(idlef==1)
@@ -316,7 +324,11 @@ int main()
         }
 
         if(Keyboard::isKeyPressed(Keyboard::L))
+        {
             punchanim = 1;
+            isPunching = true;
+
+        }
 
         if(punchanim < 5)
         {
@@ -452,10 +464,16 @@ int main()
             {
 //                while(hitTime.getElapsedTime().asMilliseconds()<100);
                 cout<<"hit"<<endl;
-                hulkLife--;
+//                hulkLife--;
 //                hitTime.restart();
 //                hit = true;
             }
+        }
+
+        if(player.getGlobalBounds().intersects(shoitan[0].CharacterSprite.getGlobalBounds()) )
+        {
+            cout<<"punching success"<<endl;
+
         }
 
         if(hulkLife == 0)
@@ -483,6 +501,8 @@ int main()
         view.setCenter(bx, 375.5);
         view.setSize(1000, 751);
         rw.setView(view);
+
+
         for(int kl=0; kl < magazine.size() ; kl++)
         {
             rw.draw(magazine[kl].shape);
@@ -492,11 +512,6 @@ int main()
         {
             shoitan[i].Drawenemy(rw);
         }
-//        for(int i=0; i<5; i++)
-//        {
-//            shoitan[i].drawEnemyBullet(rw);
-//        }
-//        test.Drawenemy(rw);
         rw.display();
     }
     return 0;
