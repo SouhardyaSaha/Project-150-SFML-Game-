@@ -54,18 +54,32 @@ void animationrejump()
 ///Menu End
 
 
-///Eenemy
 
+class bullet
+{
+public:
+    Sprite shape;
+    bullet(Texture *texture,Vector2f pos)
+    {
+        pos.y=pos.y+20;
+        shape.setTexture(*texture);
+        shape.setScale(0.8,0.8f);
+        shape.setPosition(pos);
+    }
+
+};
+///Eenemy
 class enemy
 {
 public:
-    Texture CharacterTexture;
+    Texture CharacterTexture,guli;
     Sprite CharacterSprite;
     float scaleSize = 1.5;
     char loc[14];
     bool direction=true;
     int lyf=50;
-        Clock time;
+    Clock time;
+    vector<bullet> magazine;
 //    Clock time;
     //string location;
 
@@ -90,20 +104,14 @@ public:
         sprintf(loc, "Enemy sprites/Enemy-%d.png", x/10);
         CharacterTexture.loadFromFile(loc);
         CharacterSprite.setTexture(CharacterTexture);
-        //this->CharacterSprite.scale(1,1);
         CharacterSprite.move(-1, 0);
         if (x < 100)
         {
-            cout << x;
-            //if(this->time.getElapsedTime().asMilliseconds() > 1000){
 
                 x++;
-              //  this->time.restart();
-            //}
         }
         else{
             x = 10;
-            //time.restart();
         }
     }
     void sp(float x, float y)
@@ -121,9 +129,9 @@ public:
         else
             x = 1;
     }
-    float get1()
+    Vector2f get1()
     {
-        return CharacterSprite.getPosition().x;
+        return CharacterSprite.getPosition();
     }
     void dead()
     {
@@ -145,33 +153,54 @@ public:
         app.draw(CharacterSprite);
     }
 
+    float getX()
+    {
+        return CharacterSprite.getPosition().x;
+    }
+//    void enemyBullet()
+//    {
+//        guli.loadFromFile("fire_blue.png");
+//
+//
+//        time=btime.getElapsedTime().asSeconds();
+//        exmp.setPosition(150.f,150.f);
+//
+//        if(time.getElapsedTime().asSeconds() > 1.0)
+//        {
+//            magazine.push_back(bullet(&guli,Vector2f(CharacterSprite.getPosition() )));
+//            time.restart();
+//            btime.restart();
+//        }
+//
+//        for(int kl=0; kl < magazine.size(); kl++)
+//        {
+//            magazine[kl].shape.move(2.f,0.f);
+//            if(magazine[kl].shape.getPosition().x > rw.getSize().x)
+//            {
+//                magazine.erase(magazine.begin()+kl);
+//            }
+//        }
+//    }
+//    void drawEnemyBullet(RenderWindow &rw)
+//    {
+//        for(int kl=0;kl < magazine.size() ;kl++)
+//        {
+//            rw.draw(magazine[kl].shape);
+//        }
+//    }
+
 };
 
 ///end
 
 ///bulltet
 
-class bullet
-{
-public:
-    Sprite shape;
-    bullet(Texture *texture,Vector2f pos)
-    {
-        pos.y=pos.y+20;
-        shape.setTexture(*texture);
-        shape.setScale(0.8,0.8f);
-        shape.setPosition(pos);
-    }
-
-};
 
 
 
 
 int main()
 {
-
-//    view.zoom(2.0);
     float lowergroundY = rw.getSize().y-290 ;
 
     rw.setFramerateLimit(100);
@@ -185,8 +214,11 @@ int main()
     backgroundmusic.play();
     backgroundmusic.setLoop(true);
     float time=0.0;
+
+
     ///
     vector<bullet> magazine;
+
 
     ///background image
     BackgroundTexture.loadFromFile("background.png");
@@ -195,13 +227,22 @@ int main()
     TextureSize = BackgroundTexture.getSize();
     WindowSize = rw.getSize();
 
-    //float ScaleX = (float) WindowSize.x / TextureSize.x;
     float ScaleY = (float) WindowSize.y / TextureSize.y;
 
     background.setTexture(BackgroundTexture);
     background.setScale(1, ScaleY);
 
-        enemy test;
+
+    int enemyLowerGround = 583;
+    enemy shoitan[5];
+
+    shoitan[0].sp(900,enemyLowerGround);
+    shoitan[1].sp(4000,enemyLowerGround);
+    shoitan[2].sp(3000,enemyLowerGround);
+    shoitan[3].sp(2000,enemyLowerGround);
+    shoitan[4].sp(1080,enemyLowerGround);
+
+
     while (rw.isOpen())
     {
         Event evnt;
@@ -226,11 +267,6 @@ int main()
             IsMenuStarted = true;
         ///end
 
-        ///viewing handle
-//
-//        view.setCenter(player.getPosition());
-//        view.zoom();
-        ///end
 
         if(idlef==1)
             animationidle(clock);
@@ -282,7 +318,6 @@ int main()
         }
         if(isjumping)
         {
-//<<<<<<< HEAD
             velocityY=-20;
             jumpanim=1;
             if(jumpanim < 7)
@@ -294,10 +329,8 @@ int main()
                 jumpanim++;
             }
 
-//=======
             velocityY=-22;
             isjumping=false;
-//>>>>>>> 15e9721b2bd53325deba29be71ffa31702f1a0d7
         }
         player.move(0, velocityY);
 
@@ -315,6 +348,8 @@ int main()
 
         }
         ///END
+
+
         ///bullet
         guli.loadFromFile("fire_blue.png");
         example.loadFromFile("idle-4.png");
@@ -324,43 +359,42 @@ int main()
 
         if(time > 1.0)
         {
-            magazine.push_back(bullet(&guli,Vector2f(exmp.getPosition())));
+            magazine.push_back(bullet(&guli,shoitan[0].get1()));
+
+//            if(shoitan[1].getX() - player.getPosition().x = 500)
+            magazine.push_back(bullet(&guli,shoitan[1].get1()));
+
+            magazine.push_back(bullet(&guli,shoitan[2].get1()));
+
+            magazine.push_back(bullet(&guli,shoitan[3].get1()));
+
+            magazine.push_back(bullet(&guli,shoitan[4].get1()));
+//            magazine.push_back(bullet(&guli,Vector2f(exmp.getPosition())));
             time=0.0;
             btime.restart();
         }
 
         for(int kl=0; kl < magazine.size(); kl++)
         {
-            magazine[kl].shape.move(2.f,0.f);
-            if(magazine[kl].shape.getPosition().x > rw.getSize().x)
-            {
-                magazine.erase(magazine.begin()+kl);
-            }
+            magazine[kl].shape.move(-2.f,0.f);
+//            if(magazine[kl].shape.getPosition().x > rw.getSize().x)
+//            {
+//                magazine.erase(magazine.begin()+kl);
+//            }
         }
-
-
-
         ///end
+
 
         ///enemy
 
+//        shoitan[0].Walk();
 
-//        test.sp(100,100);
-
-        test.Walk();
-
-//        shoitan[0].sp(100,100);
-//        shoitan[1].sp(200,100);
-//        shoitan[2].sp(300,100);
-//        shoitan[3].sp(500,100);
-//        shoitan[4].sp(400,100);
+//        test.Walk();
 
 //        for(int i=0; i<5; i++)
 //        {
-//            shoitan[i].Walk();
+//            shoitan[i].enemyBullet();
 //        }
-
-
         ///end
 
         ///for mouse co ordinates
@@ -373,8 +407,6 @@ int main()
             clock.restart();
 
 
-//        View currentView = rw.getView();
-//        rw.setView(view);
         playtxt.setSmooth(true);
         player.setTexture(&playtxt);
         playtxt.setSmooth(true);
@@ -389,16 +421,20 @@ int main()
         view.setCenter(bx, 375.5);
         view.setSize(1000, 751);
         rw.setView(view);
-//        for(int kl=0;kl < magazine.size() ;kl++)
-//        {
-//            rw.draw(magazine[kl].shape);
-//        }
+        for(int kl=0;kl < magazine.size() ;kl++)
+        {
+            rw.draw(magazine[kl].shape);
+        }
 
-//         for(int i=0;i<=4;i++)
+         for(int i=0;i<=4;i++)
+        {
+            shoitan[i].Drawenemy(rw);
+        }
+//        for(int i=0; i<5; i++)
 //        {
-//            shoitan[i].Drawenemy(rw);
+//            shoitan[i].drawEnemyBullet(rw);
 //        }
-        test.Drawenemy(rw);
+//        test.Drawenemy(rw);
         rw.display();
     }
     return 0;
