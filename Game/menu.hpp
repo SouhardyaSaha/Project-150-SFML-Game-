@@ -60,19 +60,19 @@ void menuscreen(RenderWindow &window)
         menu[0].setColor(Color::White);
         menu[0].setCharacterSize(60);
         menu[0].setString("Start Game");
-        menu[0].setPosition(45, 150);
+        menu[0].setPosition(45, 250);
 
         menu[1].setFont(MenuStartFont);
         menu[1].setColor(Color::White);
         menu[0].setCharacterSize(40);
         menu[1].setString("Settings");
-        menu[1].setPosition(45,210);
+        menu[1].setPosition(45,310);
 
         menu[2].setFont(MenuStartFont);
         menu[2].setColor(Color::White);
         menu[0].setCharacterSize(40);
         menu[2].setString("Exit");
-        menu[2].setPosition(45, 260);
+        menu[2].setPosition(45, 360);
 
     if(Keyboard::isKeyPressed(Keyboard::Up) && menuClock.getElapsedTime().asMilliseconds()>250)
         MoveUp();

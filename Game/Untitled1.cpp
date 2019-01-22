@@ -8,8 +8,8 @@ using namespace std;
 int j=1,flagwalk=1,i=1,flagidle=1,idlef=1, upperPunchAnim = 6, punchanim = 5,jumpanim=7;
 
 char idle [50], walk[50] ;
-RenderWindow rw(VideoMode(1000, 751),"VS-first",Style::Close|Style::Resize);
-RectangleShape player (Vector2f(100.0f,100.0f));
+RenderWindow rw(VideoMode(1000, 751),"Game",Style::Close|Style::Resize);
+RectangleShape player (Vector2f(80.0f,100.0f));
 Texture playtxt,BackgroundTexture,guli,example;
 
 Music backgroundmusic;
@@ -53,6 +53,29 @@ void animationrejump()
 #include"menu.hpp"
 ///Menu End
 
+///game over screen
+bool isGameover = false;
+
+void gameover(RenderWindow &window)
+{
+    Texture gameoverBackground;
+    gameoverBackground.loadFromFile("gameoverbg.png");
+    Sprite overSprite;
+    Vector2u TSize,WSize;
+
+    TSize=gameoverBackground.getSize();
+    WSize = window.getSize();
+
+    float ScaleX = (float) window.getSize().x/ TSize.x;
+    float ScaleY = (float) window.getSize().y/ TSize.y;
+
+    overSprite.setTexture(gameoverBackground);
+    overSprite.setScale(ScaleX, ScaleY);
+
+    window.draw(overSprite);
+    window.display();
+}
+
 
 
 class bullet
@@ -61,12 +84,11 @@ public:
     Sprite shape;
     bullet(Texture *texture,Vector2f pos)
     {
-        pos.y=pos.y+20;
+//        pos.y=pos.y+20;
         shape.setTexture(*texture);
-        shape.setScale(0.8,0.8f);
-        shape.setPosition(pos);
+        shape.setScale(-0.8,0.8);
+        shape.setPosition(pos.x,pos.y);
     }
-
 };
 ///Eenemy
 class enemy
@@ -80,13 +102,7 @@ public:
     int lyf=50;
     Clock time;
     vector<bullet> magazine;
-//    Clock time;
-    //string location;
 
-//    int gettime()
-//    {
-//        return time.getElapsedTime.as
-//    }
     enemy()
     {
         CharacterTexture.loadFromFile("Enemy sprites/Enemy-1.png");
@@ -107,10 +123,10 @@ public:
         CharacterSprite.move(-1, 0);
         if (x < 100)
         {
-
-                x++;
+            x++;
         }
-        else{
+        else
+        {
             x = 10;
         }
     }
@@ -202,7 +218,6 @@ public:
 int main()
 {
     float lowergroundY = rw.getSize().y-290 ;
-
     rw.setFramerateLimit(100);
     playtxt.loadFromFile("hulk animation/idle-1.png");
     player.setPosition(0,lowergroundY);
@@ -232,16 +247,20 @@ int main()
     background.setTexture(BackgroundTexture);
     background.setScale(1, ScaleY);
 
+    ///hulk life
 
+    int hulkLife = 1000;
+
+    ///enemy variables
     int enemyLowerGround = 583;
     enemy shoitan[5];
 
-    shoitan[0].sp(900,enemyLowerGround);
-    shoitan[1].sp(4000,enemyLowerGround);
+    shoitan[0].sp(5000,enemyLowerGround);
+    shoitan[1].sp(1000,enemyLowerGround);
     shoitan[2].sp(3000,enemyLowerGround);
     shoitan[3].sp(2000,enemyLowerGround);
-    shoitan[4].sp(1080,enemyLowerGround);
-
+    shoitan[4].sp(6080,enemyLowerGround);
+    ///end
 
     while (rw.isOpen())
     {
@@ -260,6 +279,15 @@ int main()
                     printf("%c",evnt.text.unicode);
             }
         }
+        ///Gameover
+        while(isGameover)
+            gameover(rw);
+        if(Keyboard::isKeyPressed(Keyboard::Escape))
+            isGameover = false;
+
+
+
+
         ///menu
         while(IsMenuStarted)
             menuscreen(rw);
@@ -357,19 +385,27 @@ int main()
         time=btime.getElapsedTime().asSeconds();
         exmp.setPosition(150.f,150.f);
 
-        if(time > 1.0)
+        if(time > 1)
         {
-            magazine.push_back(bullet(&guli,shoitan[0].get1()));
+            //            magazine.push_back(bullet(&guli,shoitan[0].get1()));
 
-//            if(shoitan[1].getX() - player.getPosition().x = 500)
-            magazine.push_back(bullet(&guli,shoitan[1].get1()));
+            if(shoitan[0].getX() - player.getPosition().x <= 500)
+                magazine.push_back(bullet(&guli,shoitan[0].get1()));
 
-            magazine.push_back(bullet(&guli,shoitan[2].get1()));
 
-            magazine.push_back(bullet(&guli,shoitan[3].get1()));
+            if(shoitan[1].getX() - player.getPosition().x <= 500)
+                magazine.push_back(bullet(&guli,shoitan[1].get1()));
 
-            magazine.push_back(bullet(&guli,shoitan[4].get1()));
-//            magazine.push_back(bullet(&guli,Vector2f(exmp.getPosition())));
+            if(shoitan[2].getX() - player.getPosition().x <= 500)
+                magazine.push_back(bullet(&guli,shoitan[2].get1()));
+
+            if(shoitan[3].getX() - player.getPosition().x <= 500)
+                magazine.push_back(bullet(&guli,shoitan[3].get1()));
+
+            if(shoitan[4].getX() - player.getPosition().x <= 500)
+                magazine.push_back(bullet(&guli,shoitan[4].get1()));
+
+////            magazine.push_back(bullet(&guli,Vector2f(exmp.getPosition())));
             time=0.0;
             btime.restart();
         }
@@ -397,11 +433,37 @@ int main()
 //        }
         ///end
 
-        ///for mouse co ordinates
-        if(Mouse::isButtonPressed(Mouse::Left) && clock.getElapsedTime().asMilliseconds()>100)
+//        ///for mouse co ordinates
+//        if(Mouse::isButtonPressed(Mouse::Left) && clock.getElapsedTime().asMilliseconds()>100)
+//        {
+//            cout<<Mouse::getPosition().x<<"\t\t"<<Mouse::getPosition().y<<endl;
+//        }
+
+        ///for collision
+        bool hit = false;
+
+        for(int i=0; i<magazine.size(); i++)
         {
-            cout<<Mouse::getPosition().x<<"\t\t"<<Mouse::getPosition().y<<endl;
+//            Clock hitTime;
+
+//            if(hitTime.getElapsedTime().asMilliseconds()>)
+
+            if(player.getGlobalBounds().intersects(magazine[i].shape.getGlobalBounds()) )
+            {
+//                while(hitTime.getElapsedTime().asMilliseconds()<100);
+                cout<<"hit"<<endl;
+                hulkLife--;
+//                hitTime.restart();
+//                hit = true;
+            }
         }
+
+        if(hulkLife == 0)
+        {
+            isGameover=true;
+
+        }
+
 
         if(clock.getElapsedTime().asMilliseconds()>250.f)
             clock.restart();
@@ -421,12 +483,12 @@ int main()
         view.setCenter(bx, 375.5);
         view.setSize(1000, 751);
         rw.setView(view);
-        for(int kl=0;kl < magazine.size() ;kl++)
+        for(int kl=0; kl < magazine.size() ; kl++)
         {
             rw.draw(magazine[kl].shape);
         }
 
-         for(int i=0;i<=4;i++)
+        for(int i=0; i<=4; i++)
         {
             shoitan[i].Drawenemy(rw);
         }
