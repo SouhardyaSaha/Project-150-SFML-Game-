@@ -49,9 +49,9 @@ void menuscreen(RenderWindow &window)
 
         menuUpperWriting.setFont(menuUp);
         menuUpperWriting.setColor(Color::White);
-        menuUpperWriting.setCharacterSize(40);
+        menuUpperWriting.setCharacterSize(60);
         menuUpperWriting.setString("Menu");
-        menuUpperWriting.setPosition(150, 10);
+        menuUpperWriting.setPosition(210, 15);
 
 //    float ScaleX = (float) menuwindowsize.x / menutexturesize.x;
 //    float ScaleY = (float) menutexturesize.y / menutexturesize.y;

@@ -33,7 +33,7 @@ void animationjump()
 
     sprintf (jump,"hulk animation/jump-%d.png", jumpanim);
     playtxt.loadFromFile(jump);
-    while(clock.getElapsedTime().asMilliseconds()<100.f);
+    while(clock.getElapsedTime().asMilliseconds()<50.f);
     clock.restart();
 }
 
@@ -56,10 +56,100 @@ void animationrejump()
 
 ///Eenemy
 
-void enemy(RenderWindow window)
+class enemy
 {
+public:
+    Texture CharacterTexture;
+    Sprite CharacterSprite;
+    float scaleSize = 1.5;
+    char loc[14];
+    bool direction=true;
+    int lyf=50;
+        Clock time;
+//    Clock time;
+    //string location;
 
-}
+//    int gettime()
+//    {
+//        return time.getElapsedTime.as
+//    }
+    enemy()
+    {
+        CharacterTexture.loadFromFile("Enemy sprites/Enemy-1.png");
+        CharacterSprite.setTexture(CharacterTexture);
+        CharacterSprite.scale(-1*scaleSize, scaleSize);
+//        CharacterSprite.setPosition(100,100);
+        time.restart();
+        CharacterSprite.setOrigin(CharacterSprite.getLocalBounds().width/2, CharacterSprite.getLocalBounds().height/2);
+//        CharacterSprite.scale(-1,1);
+    }
+
+    void Walk()
+    {
+        static int x = 10;
+        sprintf(loc, "Enemy sprites/Enemy-%d.png", x/10);
+        CharacterTexture.loadFromFile(loc);
+        CharacterSprite.setTexture(CharacterTexture);
+        //this->CharacterSprite.scale(1,1);
+        CharacterSprite.move(-1, 0);
+        if (x < 100)
+        {
+            cout << x;
+            //if(this->time.getElapsedTime().asMilliseconds() > 1000){
+
+                x++;
+              //  this->time.restart();
+            //}
+        }
+        else{
+            x = 10;
+            //time.restart();
+        }
+    }
+    void sp(float x, float y)
+    {
+        CharacterSprite.setPosition(x, y);
+    }
+    void Attack()
+    {
+        static int x=1;
+        sprintf(loc, "Attack (%d).png", x);
+        this->CharacterTexture.loadFromFile(loc);
+        this->CharacterSprite.setTexture(CharacterTexture);
+        if (x < 8)
+            x++;
+        else
+            x = 1;
+    }
+    float get1()
+    {
+        return CharacterSprite.getPosition().x;
+    }
+    void dead()
+    {
+        static int x = 1;
+        sprintf(loc, "Dead (%d).png", x);
+        this->CharacterTexture.loadFromFile(loc);
+        this->CharacterSprite.setTexture(CharacterTexture);
+        if (x < 12)
+            x++;
+        else
+            CharacterSprite.setPosition(-500,200);
+    }
+    int dying()
+    {
+        return lyf=lyf-10;
+    }
+    void Drawenemy(RenderWindow &app)
+    {
+        app.draw(CharacterSprite);
+    }
+
+};
+
+///end
+
+///bulltet
 
 class bullet
 {
@@ -74,6 +164,8 @@ public:
     }
 
 };
+
+
 
 
 int main()
@@ -109,6 +201,7 @@ int main()
     background.setTexture(BackgroundTexture);
     background.setScale(1, ScaleY);
 
+        enemy test;
     while (rw.isOpen())
     {
         Event evnt;
@@ -127,8 +220,10 @@ int main()
             }
         }
         ///menu
-        while(IsMenuStarted) menuscreen(rw);
-        if(Keyboard::isKeyPressed(Keyboard::Escape)) IsMenuStarted = true;
+        while(IsMenuStarted)
+            menuscreen(rw);
+        if(Keyboard::isKeyPressed(Keyboard::Escape))
+            IsMenuStarted = true;
         ///end
 
         ///viewing handle
@@ -234,7 +329,7 @@ int main()
             btime.restart();
         }
 
-        for(int kl=0;kl < magazine.size();kl++)
+        for(int kl=0; kl < magazine.size(); kl++)
         {
             magazine[kl].shape.move(2.f,0.f);
             if(magazine[kl].shape.getPosition().x > rw.getSize().x)
@@ -246,6 +341,33 @@ int main()
 
 
         ///end
+
+        ///enemy
+
+
+//        test.sp(100,100);
+
+        test.Walk();
+
+//        shoitan[0].sp(100,100);
+//        shoitan[1].sp(200,100);
+//        shoitan[2].sp(300,100);
+//        shoitan[3].sp(500,100);
+//        shoitan[4].sp(400,100);
+
+//        for(int i=0; i<5; i++)
+//        {
+//            shoitan[i].Walk();
+//        }
+
+
+        ///end
+
+        ///for mouse co ordinates
+        if(Mouse::isButtonPressed(Mouse::Left) && clock.getElapsedTime().asMilliseconds()>100)
+        {
+            cout<<Mouse::getPosition().x<<"\t\t"<<Mouse::getPosition().y<<endl;
+        }
 
         if(clock.getElapsedTime().asMilliseconds()>250.f)
             clock.restart();
@@ -260,7 +382,10 @@ int main()
         rw.draw(background);
         rw.draw(player);
         rw.draw(exmp);
-        if(player.getPosition().x > 500 && player.getPosition().x < 6560) bx = player.getPosition().x;
+
+        ///for screen viewing
+        if(player.getPosition().x > 500 && player.getPosition().x < 6560)
+            bx = player.getPosition().x;
         view.setCenter(bx, 375.5);
         view.setSize(1000, 751);
         rw.setView(view);
@@ -268,6 +393,12 @@ int main()
 //        {
 //            rw.draw(magazine[kl].shape);
 //        }
+
+//         for(int i=0;i<=4;i++)
+//        {
+//            shoitan[i].Drawenemy(rw);
+//        }
+        test.Drawenemy(rw);
         rw.display();
     }
     return 0;
